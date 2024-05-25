@@ -1,0 +1,43 @@
+% Load the image from file
+image = imread('dspimage11.jpg'); 
+
+% Check if the image is in color (RGB), convert to grayscale if necessary
+if size(image, 3) > 1
+    image = rgb2gray(image);
+end
+
+% Display the original image
+figure;
+subplot(1, 2, 1);
+imshow(image);
+title('Original Image');
+
+% Convert image data to double for processing
+imageData = double(image);
+
+% Apply 2D Discrete Cosine Transform (DCT) to image data
+dctData = dct2(imageData);
+
+% Set the number of coefficients to retain for compression
+numCoefficients = 100;
+
+% Compress the DCT data by zeroing out coefficients beyond the specified limit
+compressedData = dctData;
+compressedData(numCoefficients+1:end, :) = 0;
+compressedData(:, numCoefficients+1:end) = 0;
+
+% Reconstruct the image using the inverse 2D DCT
+reconstructedImage = idct2(compressedData);
+
+% Display the reconstructed image
+subplot(1, 2, 2);
+imshow(uint8(reconstructedImage));
+title('Reconstructed Image');
+
+% Compute and display the compression ratio
+originalSize = numel(image); % Number of elements in the original image
+compressedSize = nnz(compressedData) + numel(compressedData) + 1; % Number of non-zero elements in compressed data
+compressionRatio = originalSize / compressedSize;
+
+% Display the compression ratio
+disp(['Compression Ratio: ', num2str(compressionRatio)]);

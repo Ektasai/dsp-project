@@ -1,0 +1,21 @@
+a = double(imread('dspimage11.jpg'));
+[m, n, ~] = size(a);  % Get the size of the image, including the color channels
+b = zeros(size(a));
+
+% Prompt the user to enter the value of k once
+k = input('Enter the value of k:');
+
+for c = 1:3  % Loop over each color channel
+    [u, d, v] = svd(a(:, :, c));
+    
+    for j = 1:k
+        b(:, :, c) = b(:, :, c) + d(j, j) * u(:, j) * v(:, j).';
+    end
+end
+
+b = floor(b);
+imshow(uint8(b))
+
+% Compute and display the compression ratio
+compressionRatio = (m * n) / (k * (m + n + 1));
+disp(['Compression Ratio: ', num2str(compressionRatio)]);
